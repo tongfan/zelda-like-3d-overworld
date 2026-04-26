@@ -41,7 +41,11 @@ export class Game {
   ) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.05;
     this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.root.appendChild(this.renderer.domElement);
 
     this.input = new InputController(this.renderer.domElement);
@@ -81,16 +85,28 @@ export class Game {
   }
 
   setupScene(): void {
-    this.scene.background = new THREE.Color(0x8bd3ff);
-    this.scene.fog = new THREE.Fog(0x8bd3ff, 26, 68);
+    this.scene.background = new THREE.Color(0x9cdbff);
+    this.scene.fog = new THREE.Fog(0x9cdbff, 28, 72);
 
-    const hemisphere = new THREE.HemisphereLight(0xdaf7ff, 0x4e6a48, 2.2);
+    const hemisphere = new THREE.HemisphereLight(0xf1fbff, 0x5a7146, 2.35);
     this.scene.add(hemisphere);
 
-    const sun = new THREE.DirectionalLight(0xffffff, 2.1);
-    sun.position.set(8, 12, 6);
+    const sun = new THREE.DirectionalLight(0xfff4d6, 2.35);
+    sun.position.set(8, 14, 7);
     sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 42;
+    sun.shadow.camera.left = -22;
+    sun.shadow.camera.right = 22;
+    sun.shadow.camera.top = 22;
+    sun.shadow.camera.bottom = -22;
+    sun.shadow.bias = -0.0008;
     this.scene.add(sun);
+
+    const fill = new THREE.DirectionalLight(0xbdeeff, 0.45);
+    fill.position.set(-8, 7, -6);
+    this.scene.add(fill);
 
     this.scene.add(this.world.group);
     this.scene.add(this.player.group);
