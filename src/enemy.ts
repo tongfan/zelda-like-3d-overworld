@@ -34,12 +34,53 @@ export class Enemy {
     body.castShadow = true;
     this.group.add(body);
 
+    const belly = new THREE.Mesh(
+      new THREE.ConeGeometry(0.38, 0.78, 5),
+      new THREE.MeshStandardMaterial({ color: 0xf05a45, flatShading: true })
+    );
+    belly.position.set(0, 0.42, -0.1);
+    belly.scale.z = 0.72;
+    belly.castShadow = true;
+    this.group.add(belly);
+
     const eye = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.12, 0.08),
+      new THREE.BoxGeometry(0.44, 0.13, 0.08),
       new THREE.MeshStandardMaterial({ color: 0x3b1010, flatShading: true })
     );
     eye.position.set(0, 0.9, -0.5);
     this.group.add(eye);
+
+    const pupilLeft = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.06, 0.04),
+      new THREE.MeshStandardMaterial({ color: 0xfff3d0, flatShading: true })
+    );
+    pupilLeft.position.set(-0.12, 0.91, -0.56);
+    this.group.add(pupilLeft);
+
+    const pupilRight = pupilLeft.clone();
+    pupilRight.position.x = 0.12;
+    this.group.add(pupilRight);
+
+    const hornMaterial = new THREE.MeshStandardMaterial({ color: 0xffd784, flatShading: true });
+    const leftHorn = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.38, 5), hornMaterial);
+    leftHorn.position.set(-0.32, 1.22, -0.08);
+    leftHorn.rotation.z = 0.5;
+    leftHorn.castShadow = true;
+    this.group.add(leftHorn);
+
+    const rightHorn = leftHorn.clone();
+    rightHorn.position.x = 0.32;
+    rightHorn.rotation.z = -0.5;
+    rightHorn.castShadow = true;
+    this.group.add(rightHorn);
+
+    const shadow = new THREE.Mesh(
+      new THREE.CircleGeometry(0.62, 12),
+      new THREE.MeshBasicMaterial({ color: 0x1c2a24, transparent: true, opacity: 0.22, depthWrite: false })
+    );
+    shadow.position.y = -0.62;
+    shadow.rotation.x = -Math.PI / 2;
+    this.group.add(shadow);
 
     this.group.position.copy(this.patrolRoute[0]);
   }
