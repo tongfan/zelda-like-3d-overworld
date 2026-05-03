@@ -96,6 +96,10 @@ function makeFragmentObject(position: THREE.Vector3): THREE.Group {
   const fragment = new THREE.Group();
   fragment.position.copy(position);
 
+  const spin = new THREE.Group();
+  spin.name = "fragment-spin";
+  fragment.add(spin);
+
   const core = new THREE.Mesh(
     new THREE.OctahedronGeometry(0.45, 0),
     new THREE.MeshStandardMaterial({
@@ -108,7 +112,7 @@ function makeFragmentObject(position: THREE.Vector3): THREE.Group {
     })
   );
   core.castShadow = true;
-  fragment.add(core);
+  spin.add(core);
 
   const halo = new THREE.Mesh(
     new THREE.TorusGeometry(0.68, 0.035, 6, 18),
@@ -123,12 +127,13 @@ function makeFragmentObject(position: THREE.Vector3): THREE.Group {
   );
   halo.name = "fragment-halo";
   halo.rotation.x = Math.PI / 2;
-  fragment.add(halo);
+  spin.add(halo);
 
   const pedestal = new THREE.Mesh(
     new THREE.CylinderGeometry(0.52, 0.64, 0.26, 7),
     standardMaterial(0xb8a66f)
   );
+  pedestal.name = "fragment-pedestal";
   pedestal.position.y = -0.62;
   pedestal.castShadow = true;
   pedestal.receiveShadow = true;
@@ -145,7 +150,7 @@ function makeFragmentObject(position: THREE.Vector3): THREE.Group {
   );
   glint.position.set(0.28, 0.42, -0.08);
   glint.rotation.set(0.45, 0.25, -0.75);
-  fragment.add(glint);
+  spin.add(glint);
 
   return fragment;
 }
@@ -244,8 +249,11 @@ export class World {
 
   update(delta: number): void {
     for (const fragmentObject of this.fragmentMeshes.values()) {
-      fragmentObject.rotation.y += delta * 1.8;
-      fragmentObject.rotation.x += delta * 0.6;
+      const spin = fragmentObject.getObjectByName("fragment-spin");
+      if (spin) {
+        spin.rotation.y += delta * 1.8;
+        spin.rotation.x += delta * 0.6;
+      }
       const halo = fragmentObject.getObjectByName("fragment-halo");
       if (halo) {
         halo.rotation.z -= delta * 2.2;

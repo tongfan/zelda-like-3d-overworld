@@ -14,19 +14,20 @@ describe("World fragments", () => {
     expect(fragmentObject?.visible).toBe(false);
   });
 
-  it("rotates fragment objects during world updates", () => {
+  it("rotates the fragment spin group during world updates", () => {
     const world = new World();
     const fragmentObject = world.fragmentMeshes.get("forest");
+    const fragmentSpin = fragmentObject?.getObjectByName("fragment-spin");
 
-    expect(fragmentObject).toBeDefined();
+    expect(fragmentSpin).toBeInstanceOf(THREE.Group);
 
-    const startY = fragmentObject?.rotation.y ?? 0;
-    const startX = fragmentObject?.rotation.x ?? 0;
+    const startY = fragmentSpin?.rotation.y ?? 0;
+    const startX = fragmentSpin?.rotation.x ?? 0;
 
     world.update(0.5);
 
-    expect(fragmentObject?.rotation.y).toBeGreaterThan(startY);
-    expect(fragmentObject?.rotation.x).toBeGreaterThan(startX);
+    expect(fragmentSpin?.rotation.y).toBeGreaterThan(startY);
+    expect(fragmentSpin?.rotation.x).toBeGreaterThan(startX);
   });
 
   it("builds each fragment as a layered visual group", () => {
@@ -34,8 +35,9 @@ describe("World fragments", () => {
     const fragmentObject = world.fragmentMeshes.get("forest");
 
     expect(fragmentObject).toBeInstanceOf(THREE.Group);
-    expect(fragmentObject?.children).toHaveLength(4);
+    expect(fragmentObject?.getObjectByName("fragment-spin")).toBeInstanceOf(THREE.Group);
     expect(fragmentObject?.getObjectByName("fragment-halo")).toBeInstanceOf(THREE.Mesh);
+    expect(fragmentObject?.getObjectByName("fragment-pedestal")).toBeInstanceOf(THREE.Mesh);
   });
 
   it("counter-rotates the fragment halo during world updates", () => {
@@ -50,6 +52,21 @@ describe("World fragments", () => {
     world.update(0.5);
 
     expect(halo?.rotation.z).toBeLessThan(startZ);
+  });
+
+  it("keeps the fragment pedestal stable during world updates", () => {
+    const world = new World();
+    const fragmentObject = world.fragmentMeshes.get("forest");
+    const pedestal = fragmentObject?.getObjectByName("fragment-pedestal");
+
+    expect(pedestal).toBeInstanceOf(THREE.Mesh);
+    expect(pedestal?.parent).toBe(fragmentObject);
+
+    const startRotation = pedestal?.rotation.clone();
+
+    world.update(0.5);
+
+    expect(pedestal?.rotation.equals(startRotation ?? new THREE.Euler())).toBe(true);
   });
 });
 
