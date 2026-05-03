@@ -62,10 +62,12 @@ describe("World fragments", () => {
     expect(pedestal).toBeInstanceOf(THREE.Mesh);
     expect(pedestal?.parent).toBe(fragmentObject);
 
+    const startParentRotation = fragmentObject?.rotation.clone();
     const startRotation = pedestal?.rotation.clone();
 
     world.update(0.5);
 
+    expect(fragmentObject?.rotation.equals(startParentRotation ?? new THREE.Euler())).toBe(true);
     expect(pedestal?.rotation.equals(startRotation ?? new THREE.Euler())).toBe(true);
   });
 });
