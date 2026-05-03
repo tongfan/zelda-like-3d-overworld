@@ -150,7 +150,7 @@ export class PlayerController {
       new THREE.MeshStandardMaterial({ color: 0x2f8fe8, metalness: 0.08, roughness: 0.5, flatShading: true })
     );
     shieldEmblem.position.y = -0.065;
-    shieldEmblem.rotation.set(Math.PI / 2, 0, Math.PI / 6);
+    shieldEmblem.rotation.z = Math.PI / 6;
     shieldEmblem.castShadow = true;
     shield.add(shieldEmblem);
 
