@@ -171,6 +171,14 @@ export class PlayerController {
     swordGuard.castShadow = true;
     this.sword.add(swordGuard);
 
+    const swordHilt = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 0.1, 0.32),
+      new THREE.MeshStandardMaterial({ color: 0x4b2c1b, roughness: 0.68, flatShading: true })
+    );
+    swordHilt.position.z = 0.72;
+    swordHilt.castShadow = true;
+    this.sword.add(swordHilt);
+
     this.swordArc = new THREE.Mesh(
       new THREE.TorusGeometry(0.72, 0.035, 5, 18, Math.PI * 0.82),
       new THREE.MeshStandardMaterial({
