@@ -74,6 +74,44 @@ export class Enemy {
     rightHorn.castShadow = true;
     this.group.add(rightHorn);
 
+    const browMaterial = new THREE.MeshStandardMaterial({ color: 0x7f241f, flatShading: true });
+    const brow = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.12, 0.12), browMaterial);
+    brow.position.set(0, 1.0, -0.48);
+    brow.rotation.x = -0.18;
+    brow.castShadow = true;
+    this.group.add(brow);
+
+    const crestMaterial = new THREE.MeshStandardMaterial({ color: 0xffc15d, flatShading: true });
+    const crest = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.36, 4), crestMaterial);
+    crest.position.set(0, 1.23, 0.16);
+    crest.rotation.x = 0.18;
+    crest.castShadow = true;
+    this.group.add(crest);
+
+    const backCrest = crest.clone();
+    backCrest.position.set(0, 1.05, 0.38);
+    backCrest.scale.setScalar(0.78);
+    this.group.add(backCrest);
+
+    const spikeMaterial = new THREE.MeshStandardMaterial({ color: 0xffd784, flatShading: true });
+    const leftCheekSpike = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.32, 4), spikeMaterial);
+    leftCheekSpike.position.set(-0.46, 0.72, -0.32);
+    leftCheekSpike.rotation.z = Math.PI / 2;
+    leftCheekSpike.castShadow = true;
+    this.group.add(leftCheekSpike);
+
+    const rightCheekSpike = leftCheekSpike.clone();
+    rightCheekSpike.position.x = 0.46;
+    rightCheekSpike.rotation.z = -Math.PI / 2;
+    rightCheekSpike.castShadow = true;
+    this.group.add(rightCheekSpike);
+
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.58, 5), browMaterial);
+    tail.position.set(0, 0.34, 0.62);
+    tail.rotation.x = Math.PI / 2;
+    tail.castShadow = true;
+    this.group.add(tail);
+
     const shadow = new THREE.Mesh(
       new THREE.CircleGeometry(0.62, 12),
       new THREE.MeshBasicMaterial({ color: 0x1c2a24, transparent: true, opacity: 0.22, depthWrite: false })
