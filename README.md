@@ -44,6 +44,16 @@ npm run dev
 
 Then open the local URL printed by Vite in a desktop browser.
 
+## GitHub Pages Preview
+
+Push to `main` to publish the current build with GitHub Pages:
+
+```text
+https://tongfan.github.io/zelda-like-3d-overworld/
+```
+
+In the repository settings, set Pages source to GitHub Actions.
+
 ## Scripts
 
 | Command | Purpose |
