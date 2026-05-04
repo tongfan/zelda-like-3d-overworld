@@ -92,6 +92,84 @@ function makeFlowerPatch(x: number, z: number, color: THREE.ColorRepresentation)
   return patch;
 }
 
+function makeFragmentObject(position: THREE.Vector3): THREE.Group {
+  const fragment = new THREE.Group();
+  fragment.position.copy(position);
+
+  const spin = new THREE.Group();
+  spin.name = "fragment-spin";
+  fragment.add(spin);
+
+  const core = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.45, 0),
+    new THREE.MeshStandardMaterial({
+      color: 0xfff06a,
+      emissive: 0xffc247,
+      emissiveIntensity: 0.55,
+      roughness: 0.35,
+      metalness: 0.05,
+      ...lowPoly
+    })
+  );
+  core.castShadow = true;
+  spin.add(core);
+
+  const halo = new THREE.Mesh(
+    new THREE.TorusGeometry(0.68, 0.035, 6, 18),
+    new THREE.MeshStandardMaterial({
+      color: 0xfff4a8,
+      emissive: 0xffd75a,
+      emissiveIntensity: 0.45,
+      transparent: true,
+      opacity: 0.78,
+      ...lowPoly
+    })
+  );
+  halo.name = "fragment-halo";
+  halo.rotation.x = Math.PI / 2;
+  spin.add(halo);
+
+  const pedestal = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.52, 0.64, 0.26, 7),
+    standardMaterial(0xb8a66f)
+  );
+  pedestal.name = "fragment-pedestal";
+  pedestal.position.y = -0.62;
+  pedestal.castShadow = true;
+  pedestal.receiveShadow = true;
+  fragment.add(pedestal);
+
+  const glint = new THREE.Mesh(
+    new THREE.ConeGeometry(0.12, 0.42, 4),
+    new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0xfff7c6,
+      emissiveIntensity: 0.7,
+      ...lowPoly
+    })
+  );
+  glint.position.set(0.28, 0.42, -0.08);
+  glint.rotation.set(0.45, 0.25, -0.75);
+  spin.add(glint);
+
+  return fragment;
+}
+
+function makeDoorRune(name: string, size: [number, number, number], position: [number, number, number]): THREE.Mesh {
+  const rune = new THREE.Mesh(
+    new THREE.BoxGeometry(...size),
+    new THREE.MeshStandardMaterial({
+      color: 0xffdd73,
+      emissive: 0xd79b35,
+      emissiveIntensity: 0.28,
+      ...lowPoly
+    })
+  );
+  rune.name = name;
+  rune.position.set(...position);
+  return rune;
+}
+
 export class World {
   readonly group = new THREE.Group();
   readonly spawn = new THREE.Vector3(0, 0.6, 12);
@@ -101,7 +179,7 @@ export class World {
     { id: "ridge", label: "Ridge Fragment", position: new THREE.Vector3(8, 3.2, -7), radius: 1 },
     { id: "lake", label: "Lake Fragment", position: new THREE.Vector3(8, 0.9, 7), radius: 1 }
   ];
-  readonly fragmentMeshes = new Map<string, THREE.Mesh>();
+  readonly fragmentMeshes = new Map<string, THREE.Group>();
   readonly door: THREE.Mesh;
 
   private readonly doorMaterial = standardMaterial(0x3b2a1f);
@@ -117,6 +195,11 @@ export class World {
     this.door.position.copy(this.doorPosition);
     this.door.castShadow = true;
     this.group.add(this.door);
+    this.door.add(makeDoorRune("door-rune-top", [0.58, 0.08, 0.04], [0, 0.68, -0.2]));
+    this.door.add(makeDoorRune("door-rune-left", [0.08, 0.46, 0.04], [-0.42, 0.18, -0.2]));
+    this.door.add(makeDoorRune("door-rune-right", [0.08, 0.46, 0.04], [0.42, 0.18, -0.2]));
+    this.door.add(makeDoorRune("door-rune-center", [0.16, 0.16, 0.04], [0, 0.16, -0.2]));
+    this.door.add(makeDoorRune("door-rune-base", [0.72, 0.08, 0.04], [0, -0.48, -0.2]));
 
     this.doorGlow = new THREE.Mesh(
       new THREE.TorusGeometry(1.35, 0.045, 6, 18),
@@ -165,9 +248,16 @@ export class World {
   }
 
   update(delta: number): void {
-    for (const mesh of this.fragmentMeshes.values()) {
-      mesh.rotation.y += delta * 1.8;
-      mesh.rotation.x += delta * 0.6;
+    for (const fragmentObject of this.fragmentMeshes.values()) {
+      const spin = fragmentObject.getObjectByName("fragment-spin");
+      if (spin) {
+        spin.rotation.y += delta * 1.8;
+        spin.rotation.x += delta * 0.6;
+      }
+      const halo = fragmentObject.getObjectByName("fragment-halo");
+      if (halo) {
+        halo.rotation.z -= delta * 2.2;
+      }
     }
     this.doorGlow.rotation.z += delta * 0.65;
   }
@@ -307,21 +397,10 @@ export class World {
   }
 
   private addFragments(): void {
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xfff06a,
-      emissive: 0xffc247,
-      emissiveIntensity: 0.55,
-      roughness: 0.35,
-      metalness: 0.05,
-      ...lowPoly
-    });
-
     for (const fragment of this.fragments) {
-      const mesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.45, 0), material.clone());
-      mesh.position.copy(fragment.position);
-      mesh.castShadow = true;
-      this.fragmentMeshes.set(fragment.id, mesh);
-      this.group.add(mesh);
+      const fragmentObject = makeFragmentObject(fragment.position);
+      this.fragmentMeshes.set(fragment.id, fragmentObject);
+      this.group.add(fragmentObject);
     }
   }
 }

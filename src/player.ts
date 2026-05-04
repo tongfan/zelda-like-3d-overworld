@@ -32,6 +32,31 @@ export class PlayerController {
     body.castShadow = true;
     this.group.add(body);
 
+    const tunicAccent = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.46, 0.04),
+      new THREE.MeshStandardMaterial({ color: 0xcfefff, roughness: 0.62, flatShading: true })
+    );
+    tunicAccent.position.set(0, 0.58, -0.33);
+    tunicAccent.rotation.z = 0.18;
+    tunicAccent.castShadow = true;
+    this.group.add(tunicAccent);
+
+    const belt = new THREE.Mesh(
+      new THREE.BoxGeometry(0.64, 0.12, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x5a321d, roughness: 0.7, flatShading: true })
+    );
+    belt.position.set(0, 0.28, -0.27);
+    belt.castShadow = true;
+    this.group.add(belt);
+
+    const buckle = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.14, 0.05),
+      new THREE.MeshStandardMaterial({ color: 0xf5d36b, metalness: 0.12, roughness: 0.48, flatShading: true })
+    );
+    buckle.position.set(0, 0.28, -0.33);
+    buckle.castShadow = true;
+    this.group.add(buckle);
+
     const cape = new THREE.Mesh(
       new THREE.BoxGeometry(0.58, 0.8, 0.08),
       new THREE.MeshStandardMaterial({ color: 0x1f5fb5, flatShading: true })
@@ -79,6 +104,18 @@ export class PlayerController {
     rightArm.castShadow = true;
     this.group.add(rightArm);
 
+    const shoulderMaterial = new THREE.MeshStandardMaterial({ color: 0x79c8ff, roughness: 0.55, flatShading: true });
+    const leftShoulder = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), shoulderMaterial);
+    leftShoulder.position.set(-0.33, 0.88, -0.03);
+    leftShoulder.scale.set(1.25, 0.75, 0.9);
+    leftShoulder.castShadow = true;
+    this.group.add(leftShoulder);
+
+    const rightShoulder = leftShoulder.clone();
+    rightShoulder.position.x = 0.33;
+    rightShoulder.castShadow = true;
+    this.group.add(rightShoulder);
+
     const bootMaterial = new THREE.MeshStandardMaterial({ color: 0x24456b, flatShading: true });
     const leftBoot = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.32), bootMaterial);
     leftBoot.position.set(-0.17, -0.06, -0.05);
@@ -99,6 +136,24 @@ export class PlayerController {
     shield.castShadow = true;
     this.group.add(shield);
 
+    const shieldRim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.31, 0.025, 5, 6),
+      new THREE.MeshStandardMaterial({ color: 0xffe08a, metalness: 0.12, roughness: 0.44, flatShading: true })
+    );
+    shieldRim.position.y = -0.05;
+    shieldRim.rotation.x = Math.PI / 2;
+    shieldRim.castShadow = true;
+    shield.add(shieldRim);
+
+    const shieldEmblem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.1, 0.1, 0.025, 3),
+      new THREE.MeshStandardMaterial({ color: 0x2f8fe8, metalness: 0.08, roughness: 0.5, flatShading: true })
+    );
+    shieldEmblem.position.y = -0.065;
+    shieldEmblem.rotation.z = Math.PI / 6;
+    shieldEmblem.castShadow = true;
+    shield.add(shieldEmblem);
+
     this.sword = new THREE.Mesh(
       new THREE.BoxGeometry(0.12, 0.12, 1.25),
       new THREE.MeshStandardMaterial({ color: 0xe8edf0, metalness: 0.25, roughness: 0.5 })
@@ -107,6 +162,22 @@ export class PlayerController {
     this.sword.rotation.y = -0.25;
     this.sword.visible = false;
     this.group.add(this.sword);
+
+    const swordGuard = new THREE.Mesh(
+      new THREE.BoxGeometry(0.46, 0.1, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0xf3c85b, metalness: 0.16, roughness: 0.42, flatShading: true })
+    );
+    swordGuard.position.z = 0.52;
+    swordGuard.castShadow = true;
+    this.sword.add(swordGuard);
+
+    const swordHilt = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 0.1, 0.32),
+      new THREE.MeshStandardMaterial({ color: 0x4b2c1b, roughness: 0.68, flatShading: true })
+    );
+    swordHilt.position.z = 0.72;
+    swordHilt.castShadow = true;
+    this.sword.add(swordHilt);
 
     this.swordArc = new THREE.Mesh(
       new THREE.TorusGeometry(0.72, 0.035, 5, 18, Math.PI * 0.82),
